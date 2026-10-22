@@ -27,22 +27,13 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
-          java-version: '17'
+          java-version: '11'
 
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.x'
-          cache: true
-          cache-key: "flutter-:os:-:channel:-:version:-:arch:-:hash:"
-
-      - name: Fix Dart SDK Constraint for Dart 3+
-        run: |
-          # Automatically update pubspec.yaml SDK lower bound to >=2.12.0 to support modern Dart SDKs
-          sed -i 's/sdk: *">=2\.[0-7]\./sdk: ">=2.12.0/g' pubspec.yaml
-          # Fallback general replacement if formatting differs
-          sed -i 's/sdk: *">=2\.[0-11]\./sdk: ">=2.12.0/g' pubspec.yaml
-          cat pubspec.yaml | grep sdk
+          flutter-version: '2.10.5'
+          channel: 'stable'
 
       - name: Verify Flutter Setup
         run: flutter doctor
