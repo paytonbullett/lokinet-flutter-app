@@ -29,6 +29,11 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
+      - name: Set up Android SDK, NDK, and CMake
+        uses: android-actions/setup-android@v3
+        with:
+          packages: 'ndk;23.1.7779620 cmake;3.22.1'
+
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
@@ -38,13 +43,6 @@ jobs:
       - name: Patch Dependencies for Modern Dart/Flutter
         run: |
           sed -i 's/shared_preferences: *"\^0\.5\./shared_preferences: ">=0.5.12 <3.0.0"/g' pubspec.yaml
-
-      - name: Install Android NDK via SDK Manager
-        run: |
-          # Use Android SDK path to run sdkmanager and install NDK/CMake
-          export ANDROID_SDK_ROOT=$HOME/Android/Sdk
-          yes | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --licenses || true
-          $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager "ndk;23.1.7779620" "cmake;3.22.1"
 
       - name: Verify Flutter Setup
         run: flutter doctor
