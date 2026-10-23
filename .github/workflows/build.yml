@@ -29,24 +29,29 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      # 1. Set up Flutter FIRST so its environment takes place
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.7.12'
           channel: 'stable'
 
-      # 2. Set up Android SDK and NDK AFTER Flutter
       - name: Set up Android SDK, NDK, and CMake
         uses: android-actions/setup-android@v3
         with:
           packages: 'ndk;23.1.7779620 cmake;3.22.1'
 
-      # 3. Export the NDK path so Gradle actually reads it
-      - name: Export Android NDK Path
+      - name: Force NDK Configuration for Subprojects
         run: |
+          # Explicitly export environment variables for Gradle
           echo "ANDROID_NDK_HOME=$ANDROID_SDK_ROOT/ndk/23.1.7779620" >> $GITHUB_ENV
-          echo "android.ndkVersion=23.1.7779620" >> android/local.properties || true
+          
+          # Write local.properties for both root and the stubborn lokinet_lib submodule
+          echo "sdk.dir=$ANDROID_SDK_ROOT" > android/local.properties
+          echo "ndk.dir=$ANDROID_SDK_ROOT/ndk/23.1.7779620" >> android/local.properties
+          
+          mkdir -p lokinet_lib/android
+          echo "sdk.dir=$ANDROID_SDK_ROOT" > lokinet_lib/android/local.properties
+          echo "ndk.dir=$ANDROID_SDK_ROOT/ndk/23.1.7779620" >> lokinet_lib/android/local.properties
 
       - name: Patch Dependencies for Modern Dart/Flutter
         run: |
