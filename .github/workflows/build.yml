@@ -38,30 +38,32 @@ jobs:
       - name: Set up Android SDK, NDK, and CMake
         uses: android-actions/setup-android@v3
         with:
-          packages: 'ndk;23.1.7779620 cmake;3.22.1'
+          packages: 'ndk;21.3.6528147 cmake;3.22.1'
 
       - name: Fix Legacy NDK Paths for Submodules
         run: |
           # Create the legacy ndk-bundle symlink that old gradle files look for
-          ln -s $ANDROID_SDK_ROOT/ndk/23.1.7779620 $ANDROID_SDK_ROOT/ndk-bundle
-          
-          # Export environment hooks and local properties
-          echo "ANDROID_NDK_HOME=$ANDROID_SDK_ROOT/ndk/23.1.7779620" >> $GITHUB_ENV
-          echo "ANDROID_NDK_ROOT=$ANDROID_SDK_ROOT/ndk/23.1.7779620" >> $GITHUB_ENV
-          
+          ln -sfn $ANDROID_SDK_ROOT/ndk/21.3.6528147 $ANDROID_SDK_ROOT/ndk-bundle
+
+          # Export environment hooks
+          echo "ANDROID_NDK_HOME=$ANDROID_SDK_ROOT/ndk/21.3.6528147" >> $GITHUB_ENV
+          echo "ANDROID_NDK_ROOT=$ANDROID_SDK_ROOT/ndk/21.3.6528147" >> $GITHUB_ENV
+          echo "NDK=$ANDROID_SDK_ROOT/ndk/21.3.6528147" >> $GITHUB_ENV
+
+          # local.properties for the main app and the plugin
           echo "sdk.dir=$ANDROID_SDK_ROOT" > android/local.properties
-          echo "ndk.dir=$ANDROID_SDK_ROOT/ndk-bundle" >> android/local.properties
-          
+          echo "ndk.dir=$ANDROID_SDK_ROOT/ndk/21.3.6528147" >> android/local.properties
+
           mkdir -p lokinet_lib/android
           echo "sdk.dir=$ANDROID_SDK_ROOT" > lokinet_lib/android/local.properties
-          echo "ndk.dir=$ANDROID_SDK_ROOT/ndk-bundle" >> lokinet_lib/android/local.properties
+          echo "ndk.dir=$ANDROID_SDK_ROOT/ndk/21.3.6528147" >> lokinet_lib/android/local.properties
 
       - name: Patch Dependencies for Modern Dart/Flutter
         run: |
           sed -i 's/shared_preferences: *"\^0\.5\./shared_preferences: ">=0.5.12 <3.0.0"/g' pubspec.yaml
 
       - name: Verify Flutter Setup
-        run: flutter doctor
+        run: flutter doctor -v
 
       - name: Build Debug APK
         run: |
