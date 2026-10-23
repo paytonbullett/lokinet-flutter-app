@@ -39,11 +39,12 @@ jobs:
         run: |
           sed -i 's/shared_preferences: *"\^0\.5\./shared_preferences: ">=0.5.12 <3.0.0"/g' pubspec.yaml
 
-      - name: Install Android SDK NDK and CMake
+      - name: Install Android NDK via SDK Manager
         run: |
-          # Automatically accept SDK licenses and install the required NDK/CMake components for native C++ compilation
-          yes | sdkmanager --licenses
-          sdkmanager "ndk;23.1.7779620" "cmake;3.22.1"
+          # Use Android SDK path to run sdkmanager and install NDK/CMake
+          export ANDROID_SDK_ROOT=$HOME/Android/Sdk
+          yes | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --licenses || true
+          $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager "ndk;23.1.7779620" "cmake;3.22.1"
 
       - name: Verify Flutter Setup
         run: flutter doctor
