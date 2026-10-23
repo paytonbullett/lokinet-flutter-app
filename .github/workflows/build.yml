@@ -34,6 +34,10 @@ jobs:
         with:
           packages: 'ndk;23.1.7779620 cmake;3.22.1'
 
+      - name: Export Android NDK Path
+        run: |
+          echo "ANDROID_NDK_HOME=$ANDROID_SDK_ROOT/ndk/23.1.7779620" >> $GITHUB_ENV
+
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
